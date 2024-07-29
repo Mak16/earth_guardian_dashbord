@@ -1,35 +1,58 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header";
 import SideBar from "./components/SideBar";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
+import ProtectedRoute from "./ProtectedRoute";
 import Home from "./pages/Home";
 import Volunteers from "./pages/Volunteers";
-
-import { useLocation } from "react-router-dom";
 
 function App() {
   const location = useLocation();
   const pageName = location.pathname.replace(/\//g, "");
+
+  const isAuthPage =
+    location.pathname === "/" || location.pathname === "/signup";
+
   return (
-    <div div className="flex flex-col fixed">
-      <Header />
-      <div className="flex flex-row w-screen">
-        <div className="w-[15%] ">
-          <SideBar />
-        </div>
-        <div className="w-full h-screen overflow-auto bg-[#def5de]">
-          {pageName ? (
+    <div className="flex flex-col h-screen">
+      {!isAuthPage && <Header />}
+      <div className={`flex h-[90vh] ${!isAuthPage ? "flex-row" : "flex-col"} w-full`}>
+        {!isAuthPage && (
+          <div className="w-[15%]">
+            <SideBar />
+          </div>
+        )}
+        <div
+          className={`w-full overflow-auto bg-[#def5de] ${
+            isAuthPage ? "flex justify-center items-center" : ""
+          }`}
+        >
+          {pageName && !isAuthPage && (
             <h3 className="mt-8 ml-20 text-4xl text-[#1D2130] font-Montserrat font-extrabold">
-              {pageName}{" "}
-            </h3>
-          ) : (
-            <h3 className="mt-8 ml-20 text-4xl text-[#1D2130] font-Montserrat font-extrabold">
-              home
+              {pageName}
             </h3>
           )}
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/volunteers" element={<Volunteers />} />
+            <Route path="/" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route
+              path="/admin-dashboard"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/volunteers"
+              element={
+                <ProtectedRoute>
+                  <Volunteers />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </div>
       </div>

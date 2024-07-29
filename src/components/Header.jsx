@@ -1,10 +1,46 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
+import { auth, db, storage } from "../firebaseConfig";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import logo from "../assets/earth_Guardian_logo.png";
 
 export default function Header() {
+  const [userData, setUserData] = useState(null);
+  const [newPhoto, setNewPhoto] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUserData(docSnap.data());
+        } else {
+          console.log("No such document!");
+        }
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const handlePhotoUpload = async () => {
+    const user = auth.currentUser;
+    if (user && newPhoto) {
+      const photoRef = ref(storage, `users/${user.uid}/profile.jpg`);
+      await uploadBytes(photoRef, newPhoto);
+      const photoURL = await getDownloadURL(photoRef);
+      await updateDoc(doc(db, "users", user.uid), {
+        photoURL,
+      });
+      setUserData({ ...userData, photoURL });
+    }
+  };
+
   return (
-    <div className="w-full flex flex-row items-center shadow-md  justify-between px-10 py-2">
+    <div className="w-full flex flex-row items-center shadow-md justify-between px-10 py-2">
       <div className="">
         <img className="max-w-28 py-2" src={logo} alt="Logo" />
       </div>
@@ -25,19 +61,30 @@ export default function Header() {
             className="text-xl w-10 h-10 cursor-pointer"
           />
         </div>
-        <div className="flex items-center flex-row space-x-2">
-          <div className="flex flex-col items-end">
-            <p className="font-bold text-xl text-right font-Montserrat">
-              John Doe
-            </p>
-            <p className="text-sm text-right font-Montserrat">from DRC</p>
+        {userData && (
+          <div className="flex items-center flex-row space-x-2">
+            <div className="flex flex-col items-end">
+              <p className="font-bold text-xl text-right font-Montserrat">
+                {userData.nom} {userData.postnom}
+              </p>
+              <p className="text-sm text-right font-Montserrat">{userData.role}</p>
+            </div>
+            <input
+              type="file"
+              onChange={(e) => setNewPhoto(e.target.files[0])}
+              className="hidden"
+              id="profile-photo"
+            />
+            <label htmlFor="profile-photo">
+              <img
+                src={userData.photoURL || "https://via.placeholder.com/40"}
+                alt="Profile"
+                className="w-12 h-12 rounded-full border border-gray-300 cursor-pointer"
+              />
+            </label>
+            <button onClick={handlePhotoUpload} className="hidden" id="upload-button">Upload</button>
           </div>
-          <img
-            src="https://via.placeholder.com/40"
-            alt="Profile"
-            className="w-12 h-12 rounded-full border border-gray-300"
-          />
-        </div>
+        )}
       </div>
     </div>
   );
