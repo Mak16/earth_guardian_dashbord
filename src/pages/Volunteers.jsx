@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+// import dotenv  from "dotenv";
+
+// dotenv.config();
 
 export default function Volunteers() {
   const [volunteers, setVolunteers] = useState([]);
@@ -8,7 +11,7 @@ export default function Volunteers() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:9000/volunteer")
+      .get(`https://earth-guardian-api.onrender.com/volunteer`)
       .then((response) => {
         setVolunteers(response.data);
       })
