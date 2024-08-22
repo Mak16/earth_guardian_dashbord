@@ -10,19 +10,47 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user && user.emailVerified) {
-        navigate("/admin-dashboard");
-      } else if (user && !user.emailVerified) {
-        alert("Please verify your email before logging in.");
-      }
-    });
+    const userInfo = localStorage.getItem('user');
+  if (userInfo) {
+    const user = JSON.parse(userInfo);
+
+    // Check if user is verified or not
+    if (user.email) {
+      // Use additional user information
+      console.log("Display Name:", user.displayName);
+      console.log("Photo URL:", user.photoURL);
+
+      navigate("/admin-dashboard");
+    } else {
+      alert("Please verify your email before logging in.");
+    }
+  } else {
+    // No user info in local storage, handle accordingly
+  }
   }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      // Save user information to local storage
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+          nom: user.nom,
+          postnom: user.postnom,
+          role: user.role,
+          photoURL: user.photoURL,
+        })
+      );
+      navigate("/admin-dashboard");
     } catch (error) {
       setError(error.message);
     }
