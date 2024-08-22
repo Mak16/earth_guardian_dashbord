@@ -31,7 +31,8 @@ export default function Volunteers() {
 
   return (
     <div className="py-10 px-20 space-y-5 w-full">
-      <div className="bg-white mx-auto p-10 rounded-3xl">
+      <div className="bg-white mx-auto h-[70vh] p-10 rounded-3xl">
+        <div className=" h-[90%] w-full">
         <table className="border-2 w-full rounded-3xl">
           <thead className="border-2">
             <tr>
@@ -68,6 +69,7 @@ export default function Volunteers() {
             ))}
           </tbody>
         </table>
+        </div>
         <div className="flex justify-center mt-4">
           <nav className="relative z-0 inline-flex rounded-md shadow-sm">
             {pageNumbers.map((number) => (

@@ -7,6 +7,7 @@ import SignUp from "./pages/SignUp";
 import ProtectedRoute from "./ProtectedRoute";
 import Home from "./pages/Home";
 import Volunteers from "./pages/Volunteers";
+import Donations from "./pages/Donations";
 
 function App() {
   const location = useLocation();
@@ -18,7 +19,11 @@ function App() {
   return (
     <div className="flex flex-col h-screen">
       {!isAuthPage && <Header />}
-      <div className={`flex h-[90vh] ${!isAuthPage ? "flex-row" : "flex-col"} w-full`}>
+      <div
+        className={`flex h-[90vh] ${
+          !isAuthPage ? "flex-row" : "flex-col"
+        } w-full`}
+      >
         {!isAuthPage && (
           <div className="w-[15%]">
             <SideBar />
@@ -38,7 +43,7 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route
-              path="/admin-dashboard"
+              path="/Admin-dashboard"
               element={
                 <ProtectedRoute>
                   <Home />
@@ -46,13 +51,22 @@ function App() {
               }
             />
             <Route
-              path="/volunteers"
+              path="/Volunteers"
               element={
                 <ProtectedRoute>
                   <Volunteers />
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/Donations"
+              element={
+                <ProtectedRoute>
+                  <Donations />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<h2>Page not found</h2>} />
           </Routes>
         </div>
       </div>

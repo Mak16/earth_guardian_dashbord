@@ -4,7 +4,7 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { auth, db, storage } from "../firebaseConfig";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { setDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import validator from "validator";
@@ -199,6 +199,12 @@ const SignUp = () => {
             Sign Up
           </button>
         </form>
+        <p className="text-center">
+          Have an account?{" "}
+          <Link to="/Admin-dashboard" className="text-blue-500">
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );
